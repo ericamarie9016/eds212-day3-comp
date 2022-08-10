@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 library(tidyverse)
+library(palmerpenguins)
 ```
 
 ### `if` statements
@@ -75,5 +76,42 @@ if(marmot < 0.5) {
 } else {
   print("this is a big marmot")
 }
+```
+
+
+### Summary table
+#### `group_by() %>% summarize()`
+Can use this to make pivot tables
+
+```{r}
+view(penguins)
+
+unique(penguins$species) # returns the unique values only, does not group
+unique(starwars$eye_color)
+
+penguins |> 
+  group_by(species, island) |>   # Organizing column by different species
+  summarize(mean_bill_length = mean(bill_length_mm, na.rm = TRUE),
+            sd_bill_length = sd(bill_length_mm, na.rm = TRUE),
+            n = n()) # the count of each BUT includes NA items ignored above
+# Output table has species with subgroups of islands, then data on mean and sd 
+```
+
+```{r}
+# Find the mean and sd of character height in `starwars` grouped by homeworld
+
+starwars |> 
+  group_by(homeworld) |> 
+  summarize(height_mean = mean(height, na.rm = TRUE),
+            heigh_sd = sd(height, na.rm = TRUE),
+            n = n())
+
+# Find maximum and min flipper length, sample size, for each species and gender of penguins
+penguins |> 
+  group_by(species, sex) |> 
+  summarize(max_flipper = max(flipper_length_mm, na.rm = TRUE),
+            min_flipper = min(flipper_length_mm, na.rm = TRUE),
+            n = n())
+
 ```
 
