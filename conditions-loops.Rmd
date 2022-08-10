@@ -115,3 +115,99 @@ penguins |>
 
 ```
 
+#### `across()`
+```{r}
+# Across any columns that satisfy condition, apply these
+penguins |> 
+  group_by(species) |> 
+  summarize(across(where(is.numeric), mean, na.rm = TRUE))
+
+# Can add vector of functions to action c(mean, median, sd)
+```
+
+
+### For loop Cumulative calculations
+```{r}
+tree_height <- c(1, 2, 6, 10, 14, 20)
+# Goal is the add next value to sum of the previous value
+
+for (i in seq_along(tree_height)) {
+  val = tree_height[i] + tree_height[i + 1] # Refer to next position
+  print(val)
+}
+```
+
+
+#### For loop conditional statement
+```{r}
+# Want to convert ages into diff animal years
+# Dog years = (human years * 7), elephant years = (human years *.88), goat years = (human years * 4.7)
+
+species <- c("dog", "elephant", "goat", "dog", "elephant", "goat")
+age_human <- c(3, 8, 4, 6, 12, 18, 9) # could also use cbind instead of separate vectors
+
+for (i in seq_along(species)) {
+  if (species[i] == "dog") { # single bracket because starting with vector, need [[]] if pulling from matrix/df
+    animal_age <- age_human[i] * 7
+  } else if (species[i] == "elephant") {
+    animal_age <- age_human[i] * 0.88
+  } else (species[i] == "goat") {
+    animal_age <- age_human * 4.7
+  }
+  print(animal_age)
+}   # Where is the break???
+```
+
+```{r}
+species <- c("dog", "elephant", "goat", "dog", "elephant", "goat")
+age_human <- c(3, 8, 4, 6, 12, 18, 9)
+animal_ages <- vector(mode = "numeric", length = length(species))
+
+for (i in seq_along(species)) {
+  if (species[i] == "dog") {
+    animal_age <- age_human[i] * 7
+  } else if (species[i] == "elephant") {
+    animal_age <- age_human[i] * 0.88
+  } else (species[i] == "goat")
+    animal_age <- age_human * 4.7
+  animal_ages[i] <- animal_age
+}   # Where is the break?
+```
+
+
+#### For loops across data frames
+```{r}
+mean_mtcars <- vector(mode = "numeric", length = ncol(mtcars))
+
+# Decide which reference for length
+dim(mtcars)
+seq_along(mtcars)
+ncol(mtcars)
+# All are equal, all are options
+
+for (i in seq_along(mtcars)) {
+  mean_val <- mean(mtcars[[i]], na.rm = TRUE)   # Need double brackets to return vector from df
+  mean_mtcars[i] <- mean_val
+}
+mean_mtcars
+```
+
+
+### Functional Programming
+Adding syntactic sugar (apply, across, map_df)
+
+`apply()`
+```{r}
+# Using same example as above
+apply(X = mtcars, MARGIN = 2, FUN = mean)
+```
+
+`purrr()`
+```{r}
+# Using same example as above
+map(.x = mtcars, .f = mean)
+
+# want return as a data frame
+map_df(.x = mtcars, .f = mean)
+```
+
